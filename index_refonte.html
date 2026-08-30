@@ -1015,7 +1015,7 @@
             <div class="sidebar-status" id="sidebar-status">
                 <span class="status-dot" id="sidebar-status-dot"></span>
                 <span class="sidebar-status-text">
-                    <strong>DeskBot</strong>
+                    <strong id="sidebar-status-title">DeskBot</strong>
                     <small id="sidebar-status-text">Vérification...</small>
                 </span>
             </div>
@@ -1129,22 +1129,35 @@
                             </span>
                         </div>
 
-                        <div class="system-mini-grid">
-                            <div class="system-mini">
-                                <span class="mini-icon"><img src="img/systeme.svg" class="ui-svg-icon"></span>
-                                <div><strong>Serveur</strong><small>Connecté</small></div>
+                        <div class="system-mini" id="system-serveur">
+                            <span class="mini-icon"><img src="img/systeme.svg" class="ui-svg-icon"></span>
+                            <div>
+                                <strong>Serveur</strong>
+                                <small id="system-serveur-text">Vérification...</small>
                             </div>
-                            <div class="system-mini">
-                                <span class="mini-icon"><img src="img/microphone.svg" class="ui-svg-icon"></span>
-                                <div><strong>Micro</strong><small>Disponible</small></div>
+                        </div>
+
+                        <div class="system-mini" id="system-micro">
+                            <span class="mini-icon"><img src="img/microphone.svg" class="ui-svg-icon"></span>
+                            <div>
+                                <strong>Micro</strong>
+                                <small id="system-micro-text">Vérification...</small>
                             </div>
-                            <div class="system-mini">
-                                <span class="mini-icon"><img src="img/volume.svg" class="ui-svg-icon"></span>
-                                <div><strong>Audio</strong><small>Disponible</small></div>
+                        </div>
+
+                        <div class="system-mini" id="system-audio">
+                            <span class="mini-icon"><img src="img/volume.svg" class="ui-svg-icon"></span>
+                            <div>
+                                <strong>Audio</strong>
+                                <small id="system-audio-text">Vérification...</small>
                             </div>
-                            <div class="system-mini">
-                                <span class="mini-icon"><img src="img/en_ligne.svg" class="ui-svg-icon"></span>
-                                <div><strong>Services</strong><small>Opérationnels</small></div>
+                        </div>
+
+                        <div class="system-mini" id="system-services">
+                            <span class="mini-icon"><img src="img/en_ligne.svg" class="ui-svg-icon"></span>
+                            <div>
+                                <strong>Services</strong>
+                                <small id="system-services-text">Vérification...</small>
                             </div>
                         </div>
                     </div>

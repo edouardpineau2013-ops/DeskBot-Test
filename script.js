@@ -3779,36 +3779,42 @@ const ETATS_DESKBOT = {
     nom: "En ligne",
     image: "img/en_ligne.svg",
     classe: "etat-connecté",
-  },
-
-  hors_ligne: {
-    nom: "Hors ligne",
-    image: "img/hors_ligne.svg",
-    classe: "etat-hors-ligne",
+    description: "Le système est disponible.",
   },
 
   attente: {
     nom: "En veille",
     image: "img/hors_ligne.svg",
     classe: "etat-attente",
+    description: "DeskBot est en veille.",
   },
 
   ecoute: {
     nom: "Écoute",
     image: "img/microphone.svg",
     classe: "etat-ecoute",
+    description: "DeskBot écoute actuellement.",
   },
 
   reflexion: {
     nom: "Réflexion",
     image: "img/cerveau.svg",
     classe: "etat-reflexion",
+    description: "DeskBot traite une demande.",
   },
 
   parle: {
     nom: "Parle",
     image: "img/parler.svg",
     classe: "etat-parle",
+    description: "DeskBot est en train de parler.",
+  },
+
+  hors_ligne: {
+    nom: "Hors ligne",
+    image: "img/hors_ligne.svg",
+    classe: "etat-hors-ligne",
+    description: "DeskBot est inaccessible.",
   },
 };
 
@@ -3816,11 +3822,14 @@ function afficherEtatDeskBot(etat) {
   const infos = ETATS_DESKBOT[etat];
 
   if (!infos) {
+    console.warn("État DeskBot inconnu :", etat);
     return;
   }
 
+  dernierEtatDeskBot = etat;
+
   // ==========================================
-  // ANCIEN INDICATEUR
+  // ANCIEN BLOC ÉTAT DESKBOT
   // ==========================================
 
   const image = document.getElementById("etat-deskbot-image");
@@ -3836,7 +3845,7 @@ function afficherEtatDeskBot(etat) {
   }
 
   if (carte) {
-    carte.className = "module etat-deskbot " + infos.classe;
+    carte.className = "system-legacy-state etat-deskbot " + infos.classe;
   }
 
   // ==========================================
@@ -3846,81 +3855,153 @@ function afficherEtatDeskBot(etat) {
   const livePill = document.getElementById("deskbot-live-pill");
   const liveText = document.getElementById("deskbot-live-text");
 
-  if (livePill && liveText) {
+  if (livePill) {
     livePill.className = "live-pill " + infos.classe;
+  }
 
-    if (etat === "connecté") {
-      liveText.textContent = "En ligne";
-    } else if (etat === "attente") {
-      liveText.textContent = "En veille";
-    } else if (etat === "ecoute") {
-      liveText.textContent = "Écoute";
-    } else if (etat === "reflexion") {
-      liveText.textContent = "Réflexion";
-    } else if (etat === "parle") {
-      liveText.textContent = "Parle";
-    }
+  if (liveText) {
+    liveText.textContent = infos.nom;
   }
 
   // ==========================================
-  // SIDEBAR
-  // ==========================================
-
-  const sidebarStatus = document.getElementById("sidebar-status");
-  const sidebarDot = document.getElementById("sidebar-status-dot");
-  const sidebarText = document.getElementById("sidebar-status-text");
-
-  if (sidebarStatus) {
-    sidebarStatus.className = "sidebar-status " + infos.classe;
-  }
-
-  if (sidebarDot) {
-    sidebarDot.className = "status-dot " + infos.classe;
-  }
-
-  if (sidebarText) {
-    if (etat === "connecté") {
-      sidebarText.textContent = "Prêt à fonctionner";
-    } else if (etat === "attente") {
-      sidebarText.textContent = "En veille";
-    } else if (etat === "ecoute") {
-      sidebarText.textContent = "Écoute en cours";
-    } else if (etat === "reflexion") {
-      sidebarText.textContent = "Réflexion en cours";
-    } else if (etat === "parle") {
-      sidebarText.textContent = "Parle";
-    }
-  }
-
-  // ==========================================
-  // BLOC "SYSTÈME"
+  // BLOC PRINCIPAL "DESKBOT EST PRÊT"
   // ==========================================
 
   const titre = document.getElementById("deskbot-status-title");
   const description = document.getElementById("deskbot-status-description");
 
-  if (titre && description) {
+  if (titre) {
     if (etat === "connecté") {
       titre.textContent = "DeskBot est prêt";
-      description.textContent = "Le système est disponible.";
-    } else if (etat === "attente") {
-      titre.textContent = "DeskBot est en veille";
-      description.textContent = "Le système attend une commande.";
-    } else if (etat === "ecoute") {
-      titre.textContent = "DeskBot écoute";
-      description.textContent = "Le microphone est actuellement utilisé.";
-    } else if (etat === "reflexion") {
-      titre.textContent = "DeskBot réfléchit";
-      description.textContent = "Traitement de votre demande...";
-    } else if (etat === "parle") {
-      titre.textContent = "DeskBot parle";
-      description.textContent = "DeskBot est en train de répondre.";
+    } else if (etat === "hors_ligne") {
+      titre.textContent = "DeskBot est hors ligne";
+    } else {
+      titre.textContent = "DeskBot " + infos.nom.toLowerCase();
     }
   }
 
-  dernierEtatDeskBot = etat;
+  if (description) {
+    description.textContent = infos.description;
+  }
+
+  // ==========================================
+  // BLOC SIDEBAR "DESKBOT EST PRÊT"
+  // ==========================================
+
+  const titre_sidebar = document.getElementById("sidebar-status-title");
+  const description_sidebar = document.getElementById("sidebar-status-text");
+
+  if (titre) {
+    if (etat === "connecté") {
+      titre_sidebar.textContent = "DeskBot est prêt";
+    } else if (etat === "hors_ligne") {
+      titre_sidebar.textContent = "DeskBot est hors ligne";
+    } else {
+      titre_sidebar.textContent = "DeskBot " + infos.nom.toLowerCase();
+    }
+  }
+
+  if (description) {
+    description_sidebar.textContent = infos.description;
+  }
+
+  // ==========================================
+  // SERVEUR
+  // ==========================================
+
+  const serveur = document.getElementById("system-serveur-text");
+
+  if (serveur) {
+    serveur.textContent = etat === "hors_ligne" ? "Hors ligne" : "Connecté";
+  }
+
+  // ==========================================
+  // MICRO
+  // ==========================================
+
+  const micro = document.getElementById("system-micro-text");
+
+  if (micro) {
+    if (etat === "hors_ligne") {
+      micro.textContent = "Indisponible";
+    } else if (etat === "ecoute") {
+      micro.textContent = "En écoute";
+    } else {
+      micro.textContent = "Disponible";
+    }
+  }
+
+  // ==========================================
+  // AUDIO
+  // ==========================================
+
+  const audio = document.getElementById("system-audio-text");
+
+  if (audio) {
+    audio.textContent = etat === "hors_ligne" ? "Indisponible" : "Disponible";
+  }
+
+  // ==========================================
+  // SERVICES
+  // ==========================================
+
+  const services = document.getElementById("system-services-text");
+
+  if (services) {
+    services.textContent =
+      etat === "hors_ligne" ? "Indisponibles" : "Opérationnels";
+  }
 }
 
-setInterval(chargerEtatDeskBot, 1000);
+async function chargerEtatDeskBot() {
+  if (!TOKEN) {
+    afficherEtatDeskBot("hors_ligne");
+    return;
+  }
 
+  try {
+    const response = await fetch(`${API_URL}/etat`, {
+      headers: {
+        Authorization: "Bearer " + TOKEN,
+      },
+
+      cache: "no-store",
+    });
+
+    if (response.status === 401) {
+      gererErreur401(response);
+      afficherEtatDeskBot("hors_ligne");
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error("Serveur inaccessible : HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    if (!data.etat) {
+      throw new Error("La réponse /etat ne contient aucun état.");
+    }
+
+    afficherEtatDeskBot(data.etat);
+
+    if (data.reponse) {
+      const reponse = document.getElementById("reponse");
+
+      if (reponse) {
+        reponse.textContent = "Réponse: " + data.reponse;
+      }
+    }
+  } catch (erreur) {
+    console.error("Impossible de récupérer l'état du DeskBot :", erreur);
+
+    afficherEtatDeskBot("hors_ligne");
+  }
+}
+
+// Vérification immédiate
 chargerEtatDeskBot();
+
+// Puis toutes les secondes
+setInterval(chargerEtatDeskBot, 1000);
