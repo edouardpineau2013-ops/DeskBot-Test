@@ -234,12 +234,12 @@ function surveillerReponseDeskBot() {
     .catch((erreur) => {
       console.error("Erreur récupération réponse DeskBot :", erreur);
       afficherEtat({
-        etat: "attente",
+        etat: "hors_ligne",
       });
     });
 }
 
-setInterval(surveillerReponseDeskBot, 500);
+setInterval(surveillerReponseDeskBot, 1000);
 
 function rechercherCommandes() {
   const input = document.getElementById("recherche-commandes");
@@ -3781,6 +3781,12 @@ const ETATS_DESKBOT = {
     classe: "etat-connecté",
   },
 
+  hors_ligne: {
+    nom: "Hors ligne",
+    image: "img/hors_ligne.svg",
+    classe: "etat-hors-ligne",
+  },
+
   attente: {
     nom: "En veille",
     image: "img/hors_ligne.svg",
@@ -3809,46 +3815,112 @@ const ETATS_DESKBOT = {
 function afficherEtatDeskBot(etat) {
   const infos = ETATS_DESKBOT[etat];
 
-  if (!infos) return;
+  if (!infos) {
+    return;
+  }
+
+  // ==========================================
+  // ANCIEN INDICATEUR
+  // ==========================================
 
   const image = document.getElementById("etat-deskbot-image");
   const texte = document.getElementById("etat-deskbot-texte");
   const carte = document.getElementById("etat-deskbot");
 
-  if (!image || !texte || !carte) return;
+  if (image) {
+    image.src = infos.image;
+  }
 
-  image.src = infos.image;
-  texte.textContent = infos.nom;
+  if (texte) {
+    texte.textContent = infos.nom;
+  }
 
-  carte.className = "module etat-deskbot " + infos.classe;
+  if (carte) {
+    carte.className = "module etat-deskbot " + infos.classe;
+  }
+
+  // ==========================================
+  // BADGE "EN LIGNE"
+  // ==========================================
+
+  const livePill = document.getElementById("deskbot-live-pill");
+  const liveText = document.getElementById("deskbot-live-text");
+
+  if (livePill && liveText) {
+    livePill.className = "live-pill " + infos.classe;
+
+    if (etat === "connecté") {
+      liveText.textContent = "En ligne";
+    } else if (etat === "attente") {
+      liveText.textContent = "En veille";
+    } else if (etat === "ecoute") {
+      liveText.textContent = "Écoute";
+    } else if (etat === "reflexion") {
+      liveText.textContent = "Réflexion";
+    } else if (etat === "parle") {
+      liveText.textContent = "Parle";
+    }
+  }
+
+  // ==========================================
+  // SIDEBAR
+  // ==========================================
+
+  const sidebarStatus = document.getElementById("sidebar-status");
+  const sidebarDot = document.getElementById("sidebar-status-dot");
+  const sidebarText = document.getElementById("sidebar-status-text");
+
+  if (sidebarStatus) {
+    sidebarStatus.className = "sidebar-status " + infos.classe;
+  }
+
+  if (sidebarDot) {
+    sidebarDot.className = "status-dot " + infos.classe;
+  }
+
+  if (sidebarText) {
+    if (etat === "connecté") {
+      sidebarText.textContent = "Prêt à fonctionner";
+    } else if (etat === "attente") {
+      sidebarText.textContent = "En veille";
+    } else if (etat === "ecoute") {
+      sidebarText.textContent = "Écoute en cours";
+    } else if (etat === "reflexion") {
+      sidebarText.textContent = "Réflexion en cours";
+    } else if (etat === "parle") {
+      sidebarText.textContent = "Parle";
+    }
+  }
+
+  // ==========================================
+  // BLOC "SYSTÈME"
+  // ==========================================
+
+  const titre = document.getElementById("deskbot-status-title");
+  const description = document.getElementById("deskbot-status-description");
+
+  if (titre && description) {
+    if (etat === "connecté") {
+      titre.textContent = "DeskBot est prêt";
+      description.textContent = "Le système est disponible.";
+    } else if (etat === "attente") {
+      titre.textContent = "DeskBot est en veille";
+      description.textContent = "Le système attend une commande.";
+    } else if (etat === "ecoute") {
+      titre.textContent = "DeskBot écoute";
+      description.textContent = "Le microphone est actuellement utilisé.";
+    } else if (etat === "reflexion") {
+      titre.textContent = "DeskBot réfléchit";
+      description.textContent = "Traitement de votre demande...";
+    } else if (etat === "parle") {
+      titre.textContent = "DeskBot parle";
+      description.textContent = "DeskBot est en train de répondre.";
+    }
+  }
 
   dernierEtatDeskBot = etat;
 }
 
-function chargerEtatDeskBot() {
-  if (!TOKEN) return;
-
-  fetch(`${API_URL}/etat`, {
-    headers: {
-      Authorization: "Bearer " + TOKEN,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.etat) {
-        afficherEtatDeskBot(data.etat);
-      }
-
-      if (data.reponse) {
-        document.getElementById("reponse").textContent =
-          "Réponse: " + data.reponse;
-      }
-    })
-    .catch(() => {
-      afficherEtatDeskBot("attente");
-    });
-}
-
-setInterval(chargerEtatDeskBot, 500);
+setInterval(chargerEtatDeskBot, 1000);
 
 chargerEtatDeskBot();

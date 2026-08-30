@@ -1012,11 +1012,11 @@
                 </div>
             </nav>
 
-            <div class="sidebar-status">
-                <span class="status-dot"></span>
+            <div class="sidebar-status" id="sidebar-status">
+                <span class="status-dot" id="sidebar-status-dot"></span>
                 <span class="sidebar-status-text">
                     <strong>DeskBot</strong>
-                    <small>Prêt à fonctionner</small>
+                    <small id="sidebar-status-text">Vérification...</small>
                 </span>
             </div>
         </aside>
@@ -1123,7 +1123,10 @@
                                 <p class="eyebrow">SYSTÈME</p>
                                 <h3>État du DeskBot</h3>
                             </div>
-                            <span class="live-pill"><i></i> En ligne</span>
+                            <span class="live-pill" id="deskbot-live-pill">
+                                <i></i>
+                                <span id="deskbot-live-text">Vérification...</span>
+                            </span>
                         </div>
 
                         <div class="system-mini-grid">
@@ -1184,7 +1187,10 @@
                             </label>
                         </div>
                         <span class="status-ring"><span></span></span>
-                        <div><strong>DeskBot est prêt</strong><small>Le système est disponible.</small></div>
+                        <div>
+                            <strong id="deskbot-status-title">Vérification...</strong>
+                            <small id="deskbot-status-description">Vérification de l'état du DeskBot...</small>
+                        </div>
                     </div>
                     <div id="etat-deskbot" class="system-legacy-state etat-deskbot etat-attente">
                         <img id="etat-deskbot-image" src="img/hors_ligne.svg" alt="État du DeskBot">
