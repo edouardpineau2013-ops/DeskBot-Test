@@ -197,7 +197,7 @@ function afficherReponse(commande, reponse) {
     commande.includes("resume") ||
     commande.includes("résumer") ||
     commande.includes("resumer") ||
-    commande.includes("résume ce texte: ")
+    commande.includes("Résume ce texte: ")
   ) {
     document.getElementById("reponse-resumer").textContent = reponse;
   } else if (
@@ -350,25 +350,62 @@ let secondes = 0;
 
 function chargerChronometre() {
   fetch(`${API_URL}/chronometre`, {
-    headers: { Authorization: "Bearer " + TOKEN },
+    headers: {
+      Authorization: "Bearer " + TOKEN,
+    },
+    cache: "no-store",
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erreur chronomètre : HTTP " + response.status);
+      }
+
+      return response.json();
+    })
+
     .then((data) => {
       departChrono = data.depart;
       pauseTotale = data.pause_totale;
       tempsPause = data.temps_pause;
       enMarche = data.en_marche;
       enPause = data.en_pause;
-      secondes = data.secondes;
+      secondes = data.secondes || 0;
 
       const bouton = document.getElementById("PausePlay");
 
-      if (enPause) {
-        bouton.src = "img/play.svg";
-      } else {
-        bouton.src = "img/pause.svg";
+      if (bouton) {
+        const image = bouton.querySelector("img");
+
+        if (image) {
+          if (enPause) {
+            image.src = "img/play.svg";
+            bouton.setAttribute("aria-label", "Reprendre");
+          } else {
+            image.src = "img/pause.svg";
+            bouton.setAttribute("aria-label", "Pause");
+          }
+        }
       }
+
+      afficherChronometre();
+    })
+
+    .catch((erreur) => {
+      console.error("Impossible de récupérer le chronomètre :", erreur);
     });
+}
+
+function afficherChronometre() {
+  const element = document.getElementById("chronometre-texte");
+
+  if (!element) {
+    return;
+  }
+
+  const minutes = Math.floor(secondes / 60);
+  const secondesRestantes = secondes % 60;
+
+  element.textContent = `Chronomètre : ${minutes} min ${secondesRestantes} sec`;
 }
 
 chargerChronometre();
@@ -378,11 +415,7 @@ setInterval(() => {
     secondes++;
   }
 
-  let minutes = Math.floor(secondes / 60);
-  let secondesRestantes = secondes % 60;
-
-  document.getElementById("chrono").textContent =
-    `Chronomètre : ${minutes} min ${secondesRestantes} sec`;
+  afficherChronometre();
 }, 1000);
 
 function PausePlayChrono() {
@@ -396,20 +429,30 @@ function PausePlayChrono() {
 
   fetch(`${API_URL}/commande`, {
     method: "POST",
+
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + TOKEN,
     },
+
     body: JSON.stringify({
       texte: commande,
     }),
   })
-    .then((r) => r.json())
+    .then((response) => response.json())
+
     .then((data) => {
-      document.getElementById("reponse").textContent =
-        "Réponse : " + data.reponse;
+      const reponse = document.getElementById("reponse");
+
+      if (reponse) {
+        reponse.textContent = "Réponse : " + data.reponse;
+      }
 
       chargerChronometre();
+    })
+
+    .catch((erreur) => {
+      console.error("Erreur commande chronomètre :", erreur);
     });
 }
 

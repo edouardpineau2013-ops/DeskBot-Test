@@ -1215,14 +1215,33 @@
 
                 <div class="system-tools-grid">
                     <div class="tool-control-card">
-                        <div class="tool-card-head"><span class="feature-icon clock"><img src="img/chronometre.svg" class="ui-svg-icon"></span><div><strong>Chronomètre</strong><small id="chronometre-texte">Chronomètre: 0 sec</small></div></div>
-                        <div class="control-actions">
-                            <button id="go" onclick="GoChrono()" aria-label="Démarrer"><img src="img/chronometre.svg" class="ui-svg-icon"></button>
-                            <button id="PausePlay" onclick="PausePlayChrono()" aria-label="Pause"><img src="img/pause.svg" class="ui-svg-icon"></button>
-                            <button id="stop" onclick="StopChrono()" aria-label="Stop"><img src="img/stop.svg" class="ui-svg-icon"></button>
-                            <button id="repeat" onclick="RepeatChrono()" aria-label="Réinitialiser"><img src="img/repeat.svg" class="ui-svg-icon"></button>
+                        <div class="tool-card-head">
+                            <span class="feature-icon clock">
+                                <img src="img/chronometre.svg" class="ui-svg-icon">
+                            </span>
+                            <div>
+                                <strong>Chronomètre</strong>
+                                <small id="chronometre-texte">Chronomètre : 0 min 0 sec</small>
+                            </div>
                         </div>
-                        <div id="chrono" class="legacy-time-value" aria-hidden="true"></div>
+
+                        <div class="control-actions">
+                            <button id="go" onclick="GoChrono()" aria-label="Démarrer">
+                                <img src="img/chronometre.svg" class="ui-svg-icon">
+                            </button>
+
+                            <button id="PausePlay" onclick="PausePlayChrono()" aria-label="Pause">
+                                <img src="img/pause.svg" class="ui-svg-icon">
+                            </button>
+
+                            <button id="stop" onclick="StopChrono()" aria-label="Stop">
+                                <img src="img/stop.svg" class="ui-svg-icon">
+                            </button>
+
+                            <button id="repeat" onclick="RepeatChrono()" aria-label="Réinitialiser">
+                                <img src="img/repeat.svg" class="ui-svg-icon">
+                            </button>
+                        </div>
                     </div>
 
                     <div class="tool-control-card">
