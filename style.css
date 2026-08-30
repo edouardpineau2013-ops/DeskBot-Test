@@ -2276,34 +2276,181 @@ body {
     min-height: 9px;
     border-radius: 50%;
     background: #F87171;
+    box-shadow: 0 0 12px rgba(248, 113, 113, .6);
 }
+
+.live-pill {
+    border-color: #F87171;
+    color: #F87171;
+    background-color: rgba(248, 113, 113, .2);
+}
+
+
+/* =========================================================
+   ANNEAU
+   ========================================================= */
+
+.status-ring {
+    border-color: #F87171;
+}
+
+.status-ring span {
+    background-color: #F87171;
+    box-shadow: 0 0 12px rgba(248, 113, 113, .6);
+}
+
+
+/* =========================================================
+   VERT — EN LIGNE
+   ========================================================= */
 
 .status-dot.etat-connecté,
 .live-pill.etat-connecté i {
     background: #4ADE80;
+    box-shadow: 0 0 12px rgba(74, 222, 128, .6);
 }
+
+.live-pill.etat-connecté {
+    border-color: #4ADE80;
+    color: #4ADE80;
+    background-color: rgba(74, 222, 128, .2);
+}
+
+.status-ring.etat-connecté {
+    border-color: #4ADE80;
+}
+
+.status-ring.etat-connecté span {
+    background-color: #4ADE80;
+    box-shadow: 0 0 12px rgba(74, 222, 128, .6);
+}
+
+
+/* =========================================================
+   ORANGE — EN VEILLE
+   ========================================================= */
 
 .status-dot.etat-attente,
 .live-pill.etat-attente i {
     background: #FB923C;
+    box-shadow: 0 0 12px rgba(251, 146, 60, .6);
 }
+
+.live-pill.etat-attente {
+    border-color: #FB923C;
+    color: #FB923C;
+    background-color: rgba(251, 146, 60, .2);
+}
+
+.status-ring.etat-attente {
+    border-color: #FB923C;
+}
+
+.status-ring.etat-attente span {
+    background-color: #FB923C;
+    box-shadow: 0 0 12px rgba(251, 146, 60, .6);
+}
+
+
+/* =========================================================
+   BLEU — ÉCOUTE
+   ========================================================= */
 
 .status-dot.etat-ecoute,
 .live-pill.etat-ecoute i {
     background: #60A5FA;
+    box-shadow: 0 0 12px rgba(96, 165, 250, .6);
 }
+
+.live-pill.etat-ecoute {
+    border-color: #60A5FA;
+    color: #60A5FA;
+    background-color: rgba(96, 165, 250, .2);
+}
+
+.status-ring.etat-ecoute {
+    border-color: #60A5FA;
+}
+
+.status-ring.etat-ecoute span {
+    background-color: #60A5FA;
+    box-shadow: 0 0 12px rgba(96, 165, 250, .6);
+}
+
+
+/* =========================================================
+   JAUNE — RÉFLEXION
+   ========================================================= */
 
 .status-dot.etat-reflexion,
 .live-pill.etat-reflexion i {
     background: #FACC15;
+    box-shadow: 0 0 12px rgba(250, 204, 21, .6);
 }
+
+.live-pill.etat-reflexion {
+    border-color: #FACC15;
+    color: #FACC15;
+    background-color: rgba(250, 204, 21, .2);
+}
+
+.status-ring.etat-reflexion {
+    border-color: #FACC15;
+}
+
+.status-ring.etat-reflexion span {
+    background-color: #FACC15;
+    box-shadow: 0 0 12px rgba(250, 204, 21, .6);
+}
+
+
+/* =========================================================
+   ROSE PÂLE — PARLE
+   ========================================================= */
 
 .status-dot.etat-parle,
 .live-pill.etat-parle i {
     background: #FDA4AF;
+    box-shadow: 0 0 12px rgba(253, 164, 175, .6);
 }
+
+.live-pill.etat-parle {
+    border-color: #FDA4AF;
+    color: #FDA4AF;
+    background-color: rgba(253, 164, 175, .2);
+}
+
+.status-ring.etat-parle {
+    border-color: #FDA4AF;
+}
+
+.status-ring.etat-parle span {
+    background-color: #FDA4AF;
+    box-shadow: 0 0 12px rgba(253, 164, 175, .6);
+}
+
+
+/* =========================================================
+   ROUGE — HORS LIGNE
+   ========================================================= */
 
 .status-dot.etat-hors-ligne,
 .live-pill.etat-hors-ligne i {
     background: #F87171;
+    box-shadow: 0 0 12px rgba(248, 113, 113, .6);
+}
+
+.live-pill.etat-hors-ligne {
+    border-color: #F87171;
+    color: #F87171;
+    background-color: rgba(248, 113, 113, .2);
+}
+
+.status-ring.etat-hors-ligne {
+    border-color: #F87171;
+}
+
+.status-ring.etat-hors-ligne span {
+    background-color: #F87171;
+    box-shadow: 0 0 12px rgba(248, 113, 113, .6);
 }

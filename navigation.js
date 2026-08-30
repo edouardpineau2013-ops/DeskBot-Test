@@ -233,6 +233,10 @@ function effectuerRechercheGlobale() {
   });
 }
 
+function focusCommande() {
+  document.getElementById("commande").focus({ focusVisible: true });
+}
+
 // ============================================================
 // COMPATIBILITÉ AVEC LES ANCIENS SCRIPTS
 // ============================================================

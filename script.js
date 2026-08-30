@@ -3835,12 +3835,39 @@ function afficherEtatDeskBot(etat) {
 
   dernierEtatDeskBot = etat;
 
-  // ==========================================
+  // =========================================================
+  // SUPPRIMER LES ANCIENNES CLASSES D'ÉTAT PARTOUT
+  // =========================================================
+
+  const classesEtat = [
+    "etat-connecté",
+    "etat-attente",
+    "etat-ecoute",
+    "etat-reflexion",
+    "etat-parle",
+    "etat-hors-ligne",
+  ];
+
+  const elementsEtat = document.querySelectorAll(
+    ".status-dot, .status-ring, .live-pill",
+  );
+
+  elementsEtat.forEach((element) => {
+    classesEtat.forEach((classe) => {
+      element.classList.remove(classe);
+    });
+
+    element.classList.add(infos.classe);
+  });
+
+  // =========================================================
   // ANCIEN BLOC ÉTAT DESKBOT
-  // ==========================================
+  // =========================================================
 
   const image = document.getElementById("etat-deskbot-image");
+
   const texte = document.getElementById("etat-deskbot-texte");
+
   const carte = document.getElementById("etat-deskbot");
 
   if (image) {
@@ -3855,26 +3882,32 @@ function afficherEtatDeskBot(etat) {
     carte.className = "system-legacy-state etat-deskbot " + infos.classe;
   }
 
-  // ==========================================
+  // =========================================================
   // BADGE "EN LIGNE"
-  // ==========================================
+  // =========================================================
 
   const livePill = document.getElementById("deskbot-live-pill");
+
   const liveText = document.getElementById("deskbot-live-text");
 
   if (livePill) {
-    livePill.className = "live-pill " + infos.classe;
+    classesEtat.forEach((classe) => {
+      livePill.classList.remove(classe);
+    });
+
+    livePill.classList.add(infos.classe);
   }
 
   if (liveText) {
     liveText.textContent = infos.nom;
   }
 
-  // ==========================================
-  // BLOC PRINCIPAL "DESKBOT EST PRÊT"
-  // ==========================================
+  // =========================================================
+  // BLOC PRINCIPAL
+  // =========================================================
 
   const titre = document.getElementById("deskbot-status-title");
+
   const description = document.getElementById("deskbot-status-description");
 
   if (titre) {
@@ -3891,37 +3924,45 @@ function afficherEtatDeskBot(etat) {
     description.textContent = infos.description;
   }
 
-  // ==========================================
+  // =========================================================
   // SIDEBAR
-  // ==========================================
+  // =========================================================
 
-  const titre_sidebar = document.getElementById("sidebar-status-title");
+  const titreSidebar = document.getElementById("sidebar-status-title");
 
-  const description_sidebar = document.getElementById("sidebar-status-text");
+  const descriptionSidebar = document.getElementById("sidebar-status-text");
 
-  const point_sidebar = document.getElementById("sidebar-status-dot");
+  const pointSidebar = document.getElementById("sidebar-status-dot");
 
-  const bloc_sidebar = document.getElementById("sidebar-status");
+  const blocSidebar = document.getElementById("sidebar-status");
 
-  if (titre_sidebar) {
-    titre_sidebar.textContent = "DeskBot";
+  if (titreSidebar) {
+    titreSidebar.textContent = "DeskBot";
   }
 
-  if (description_sidebar) {
-    description_sidebar.textContent = infos.nom;
+  if (descriptionSidebar) {
+    descriptionSidebar.textContent = infos.nom;
   }
 
-  if (point_sidebar) {
-    point_sidebar.className = "status-dot " + infos.classe;
+  if (pointSidebar) {
+    classesEtat.forEach((classe) => {
+      pointSidebar.classList.remove(classe);
+    });
+
+    pointSidebar.classList.add(infos.classe);
   }
 
-  if (bloc_sidebar) {
-    bloc_sidebar.className = "sidebar-status " + infos.classe;
+  if (blocSidebar) {
+    classesEtat.forEach((classe) => {
+      blocSidebar.classList.remove(classe);
+    });
+
+    blocSidebar.classList.add(infos.classe);
   }
 
-  // ==========================================
+  // =========================================================
   // SERVEUR
-  // ==========================================
+  // =========================================================
 
   const serveur = document.getElementById("system-serveur-text");
 
@@ -3929,9 +3970,9 @@ function afficherEtatDeskBot(etat) {
     serveur.textContent = etat === "hors_ligne" ? "Hors ligne" : "Connecté";
   }
 
-  // ==========================================
+  // =========================================================
   // MICRO
-  // ==========================================
+  // =========================================================
 
   const micro = document.getElementById("system-micro-text");
 
@@ -3947,9 +3988,9 @@ function afficherEtatDeskBot(etat) {
     microCard.classList.toggle("indisponible", !microDisponible);
   }
 
-  // ==========================================
+  // =========================================================
   // AUDIO
-  // ==========================================
+  // =========================================================
 
   const audio = document.getElementById("system-audio-text");
 
@@ -3965,9 +4006,9 @@ function afficherEtatDeskBot(etat) {
     audioCard.classList.toggle("indisponible", !audioDisponible);
   }
 
-  // ==========================================
+  // =========================================================
   // SERVICES
-  // ==========================================
+  // =========================================================
 
   const services = document.getElementById("system-services-text");
 
