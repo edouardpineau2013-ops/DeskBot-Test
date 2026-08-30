@@ -1,14 +1,22 @@
 let API_URL = "https://deskbot-q7ce.onrender.com";
+let modeEnceinte = false;
 
 function changeSlide(checkbox) {
   const texte_slide = document.getElementById("texte-slide");
 
-  if (checkbox.checked) {
+  modeEnceinte = checkbox.checked;
+
+  if (modeEnceinte) {
     API_URL = "https://api.gogekko.fr";
     texte_slide.textContent = "Enceinte DeskBot";
   } else {
     API_URL = "https://deskbot-q7ce.onrender.com";
     texte_slide.textContent = "Serveur";
+  }
+
+  // Actualiser immédiatement Micro et Audio
+  if (dernierEtatDeskBot) {
+    afficherEtatDeskBot(dernierEtatDeskBot);
   }
 }
 
@@ -233,9 +241,8 @@ function surveillerReponseDeskBot() {
     })
     .catch((erreur) => {
       console.error("Erreur récupération réponse DeskBot :", erreur);
-      afficherEtat({
-        etat: "hors_ligne",
-      });
+
+      afficherEtatDeskBot("hors_ligne");
     });
 }
 
@@ -3885,24 +3892,31 @@ function afficherEtatDeskBot(etat) {
   }
 
   // ==========================================
-  // BLOC SIDEBAR "DESKBOT EST PRÊT"
+  // SIDEBAR
   // ==========================================
 
   const titre_sidebar = document.getElementById("sidebar-status-title");
+
   const description_sidebar = document.getElementById("sidebar-status-text");
 
-  if (titre) {
-    if (etat === "connecté") {
-      titre_sidebar.textContent = "DeskBot est prêt";
-    } else if (etat === "hors_ligne") {
-      titre_sidebar.textContent = "DeskBot est hors ligne";
-    } else {
-      titre_sidebar.textContent = "DeskBot " + infos.nom.toLowerCase();
-    }
+  const point_sidebar = document.getElementById("sidebar-status-dot");
+
+  const bloc_sidebar = document.getElementById("sidebar-status");
+
+  if (titre_sidebar) {
+    titre_sidebar.textContent = "DeskBot";
   }
 
-  if (description) {
-    description_sidebar.textContent = infos.description;
+  if (description_sidebar) {
+    description_sidebar.textContent = infos.nom;
+  }
+
+  if (point_sidebar) {
+    point_sidebar.className = "status-dot " + infos.classe;
+  }
+
+  if (bloc_sidebar) {
+    bloc_sidebar.className = "sidebar-status " + infos.classe;
   }
 
   // ==========================================
@@ -3921,14 +3935,16 @@ function afficherEtatDeskBot(etat) {
 
   const micro = document.getElementById("system-micro-text");
 
+  const microCard = document.getElementById("system-micro");
+
+  const microDisponible = modeEnceinte && etat !== "hors_ligne";
+
   if (micro) {
-    if (etat === "hors_ligne") {
-      micro.textContent = "Indisponible";
-    } else if (etat === "ecoute") {
-      micro.textContent = "En écoute";
-    } else {
-      micro.textContent = "Disponible";
-    }
+    micro.textContent = microDisponible ? "Disponible" : "Indisponible";
+  }
+
+  if (microCard) {
+    microCard.classList.toggle("indisponible", !microDisponible);
   }
 
   // ==========================================
@@ -3937,8 +3953,16 @@ function afficherEtatDeskBot(etat) {
 
   const audio = document.getElementById("system-audio-text");
 
+  const audioCard = document.getElementById("system-audio");
+
+  const audioDisponible = modeEnceinte && etat !== "hors_ligne";
+
   if (audio) {
-    audio.textContent = etat === "hors_ligne" ? "Indisponible" : "Disponible";
+    audio.textContent = audioDisponible ? "Disponible" : "Indisponible";
+  }
+
+  if (audioCard) {
+    audioCard.classList.toggle("indisponible", !audioDisponible);
   }
 
   // ==========================================

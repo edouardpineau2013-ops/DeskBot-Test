@@ -881,6 +881,14 @@ select:focus-visible {
     font-size: 8px;
 }
 
+.system-mini.indisponible {
+    opacity: 0.55;
+}
+
+.system-mini.indisponible .mini-icon {
+    opacity: 0.6;
+}
+
 .section-shortcuts {
     display: flex;
     flex-direction: column;
@@ -2253,4 +2261,49 @@ body {
     .popup-contenu select {
         font-size: 15px !important;
     }
+}
+
+/* =========================================================
+   ÉTAT DESKBOT — PETITS POINTS
+   ========================================================= */
+
+.status-dot,
+.live-pill i {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
+    min-height: 9px;
+    border-radius: 50%;
+    background: #F87171;
+}
+
+.status-dot.etat-connecté,
+.live-pill.etat-connecté i {
+    background: #4ADE80;
+}
+
+.status-dot.etat-attente,
+.live-pill.etat-attente i {
+    background: #FB923C;
+}
+
+.status-dot.etat-ecoute,
+.live-pill.etat-ecoute i {
+    background: #60A5FA;
+}
+
+.status-dot.etat-reflexion,
+.live-pill.etat-reflexion i {
+    background: #FACC15;
+}
+
+.status-dot.etat-parle,
+.live-pill.etat-parle i {
+    background: #FDA4AF;
+}
+
+.status-dot.etat-hors-ligne,
+.live-pill.etat-hors-ligne i {
+    background: #F87171;
 }
