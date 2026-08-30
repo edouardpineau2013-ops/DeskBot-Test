@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeskBot</title>
+    <script src="script.js" defer></script>
+    <script src="navigation.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+
+    <style>
+        .ui-svg-icon {
+            width: 1.2em;
+            height: 1.2em;
+            object-fit: contain;
+            vertical-align: middle;
+            flex: 0 0 auto;
+        }
+        .nav-icon .ui-svg-icon { width: 21px; height: 21px; }
+        .feature-icon .ui-svg-icon { width: 23px; height: 23px; }
+        .mini-icon .ui-svg-icon { width: 14px; height: 14px; }
+        .intro-icon .ui-svg-icon, .school-banner-icon .ui-svg-icon { width: 24px; height: 24px; }
+        .command-bar-icon .ui-svg-icon { width: 21px; height: 21px; }
+        .fermer .ui-svg-icon { width: 18px; height: 18px; }
+        .agenda-navigation button .ui-svg-icon { width: 16px; height: 16px; }
+        .agenda-actions button .ui-svg-icon, .agenda-formulaire button .ui-svg-icon { width: 15px; height: 15px; }
+    </style>
+</head>
+<body>
+
+    <div id="popup-login" class="popup">
+        <div class="popup-contenu">
+            <h2>Connexion</h2>
+            <input id="mot-de-passe" type="password" placeholder="Mot de passe">
+            <br><br>
+            <label id="se-souvenir">
+                <input type="checkbox" id="checkbox-se-souvenir">
+                Se souvenir de cet appareil
+            </label>
+            <br><br>
+            <button onclick="seConnecter()" id="se-connecter">Se connecter</button>
+            <p id="erreur-login" style="color:#ff4444;"></p>
+        </div>
+    </div>
+    
+    <div id="popup-musique" class="popup">
+        <div class="popup-contenu">
+
+            <span class="fermer" onclick="fermerMusique()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Musique</h2>
+
+            <label id="volume-label">
+                Volume:
+                <br>
+                <input type="number" id="input-volume">
+            </label>
+            <br>
+            <button id="definir-volume" onclick="definirVolume()">Définir le volume</button>
+
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('pause la musique')">Play / Pause</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('arrête la musique')">Stop</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('lance lofi relax')">Lofi relax</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('lance lofi pour coder')">Lofi pour coder</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('lance lofi pour travailler')">Lofi pour travailler</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('lance lofi pour dormir')">Lofi pour dormir</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('lance lofi pour se concentrer')">Lofi pour se concentrer</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('lance lofi gaming')">Lofi Gaming</button>
+
+        </div>
+    </div>
+
+    <div id="popup-meteo" class="popup">
+        <div class="popup-contenu">
+
+            <span class="fermer" onclick="fermerMeteo()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Météo</h2>
+
+            <input id="ville" type="text" placeholder="Entrez votre ville...">
+
+            <button onclick="envoyerMeteo()" id="bouton-envoyer-meteo">Envoyer</button>
+
+            <input type="date" id="date">
+
+            <button onclick="envoyerCommandePrédéfinie('météo ici')" class="météo-ici">Météo ici</button>
+
+            <p id="reponse-meteo">Réponse: ...</p>
+
+        </div>
+    </div>
+
+    <div id="popup-set-minuteur" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerMinuteur()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Minuteur</h2>
+
+            <div class="minuteur-input-ligne">
+                <span class="span-minuteur">Minutes</span>
+                <div class="minuteur-controle">
+                    <img src="img/arrow-up.svg" class="fleche-minuteur" onclick="ajusterMinuteur('minutes', 1)">
+                    <input id="minuteur-minutes" type="number" min="0" value="0">
+                    <img src="img/arrow-down.svg" class="fleche-minuteur" onclick="ajusterMinuteur('minutes', -1)">
+                </div>
+            </div>
+
+            <div class="minuteur-input-ligne">
+                <span class="span-minuteur">Secondes</span>
+                <div class="minuteur-controle">
+                    <img src="img/arrow-up.svg" class="fleche-minuteur" onclick="ajusterMinuteur('secondes', 1)">
+                    <input id="minuteur-secondes" type="number" min="0" max="59" value="0">
+                    <img src="img/arrow-down.svg" class="fleche-minuteur" onclick="ajusterMinuteur('secondes', -1)">
+                </div>
+            </div>
+
+            <button onclick="demarrerMinuteurDepuisPopup()" id="demarrer-minuteur">Démarrer</button>
+        </div>
+    </div>
+
+    <div id="popup-set-alarme" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerReglageAlarme()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Régler l'alarme</h2>
+
+            <div class="minuteur-input-ligne">
+                <span class="span-minuteur">Heure</span>
+                <div class="minuteur-controle">
+                    <img src="img/arrow-up.svg" class="fleche-minuteur" onclick="ajusterAlarme('heure', 1)">
+                    <input id="alarme-heure" type="number" min="0" max="23" value="0">
+                    <img src="img/arrow-down.svg" class="fleche-minuteur" onclick="ajusterAlarme('heure', -1)">
+                </div>
+            </div>
+
+            <div class="minuteur-input-ligne">
+                <span class="span-minuteur">Minute</span>
+                <div class="minuteur-controle">
+                    <img src="img/arrow-up.svg" class="fleche-minuteur" onclick="ajusterAlarme('minute', 1)">
+                    <input id="alarme-minute" type="number" min="0" max="59" value="0">
+                    <img src="img/arrow-down.svg" class="fleche-minuteur" onclick="ajusterAlarme('minute', -1)">
+                </div>
+            </div>
+
+            <div class="jours-alarme">
+                <label><input type="checkbox" class="jour-checkbox" value="0"> Lun</label>
+                <label><input type="checkbox" class="jour-checkbox" value="1"> Mar</label>
+                <label><input type="checkbox" class="jour-checkbox" value="2"> Mer</label>
+                <label><input type="checkbox" class="jour-checkbox" value="3"> Jeu</label>
+                <label><input type="checkbox" class="jour-checkbox" value="4"> Ven</label>
+                <label><input type="checkbox" class="jour-checkbox" value="5"> Sam</label>
+                <label><input type="checkbox" class="jour-checkbox" value="6"> Dim</label>
+            </div>
+            <p style="font-size:1.1rem;" class="indication">Aucun jour coché = tous les jours</p>
+
+            <button onclick="enregistrerAlarme()" id="enregistrer-alarme">Enregistrer</button>
+        </div>
+    </div>
+
+    <div id="popup-sonnerie-alarme" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerSonnerieAlarme()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Sonnerie de l'alarme</h2>
+
+            <label class="option-sonnerie"><input type="radio" name="sonnerie" value="alarme1"> Alarme 1</label><br>
+            <label class="option-sonnerie"><input type="radio" name="sonnerie" value="alarme2"> Alarme 2</label><br>
+            <label class="option-sonnerie"><input type="radio" name="sonnerie" value="alarme3"> Alarme 3</label><br>
+            <label class="option-sonnerie"><input type="radio" name="sonnerie" value="alarme4"> Alarme 4</label><br>
+
+            <button onclick="enregistrerSonnerie()" id="enregistrer-sonnerie">Choisir</button>
+        </div>
+    </div>
+
+    <div id="popup-mails" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerMails()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Mails</h2>
+
+            <p id="mails-non-lus">Vous avez - mails non-lus.</p>
+
+            <div id="mail"></div>
+
+            <!-- ENVOYER UN MAIL -->
+            <button id="bouton-envoyer-mail" onclick="afficherFormulaireMail()">
+                Envoyer un mail
+            </button>
+
+            <div id="formulaire-envoi-mail" style="display: none;">
+
+                <input type="email" id="mail-destinataire" placeholder="Destinataire">
+
+                <input type="text" id="mail-objet" placeholder="Objet">
+
+                <textarea id="mail-contenu" placeholder="Contenu du mail"></textarea>
+
+                <button id="bouton-confirmer-mail" onclick="envoyerMail()">
+                    Envoyer le mail
+                </button>
+            </div>
+
+            <p id="result-mail"></p>
+        </div>
+    </div>
+
+    <div id="popup-import-cours" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerImportCours()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Importer un cours</h2>
+
+            <input id="import-matiere" type="text" placeholder="Matière (ex: SVT)">
+            <br><br>
+            <input id="import-chapitre" type="text" placeholder="Chapitre (ex: La cellule)">
+            <br><br>
+            <input id="import-fichier" type="file" accept=".pdf,.docx,.txt,.md">
+            <br><br>
+            <button onclick="envoyerImportCours()" id="bouton-importer-cours">Importer</button>
+            <p id="import-cours-statut"></p>
+        </div>
+    </div>
+
+    <div id="popup-stats-yt" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerStatsYoutube()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Stats YouTube</h2>
+            <input id="stats-yt-chaine" type="text" placeholder="Nom de la chaîne YouTube">
+            <br><br>
+            <button onclick="envoyerStatsYoutube()" id="bouton-stats-yt">Obtenir les stats</button>
+            <p id="reponse-stats-yt">Réponse: ...</p>
+        </div>
+    </div>
+
+    <div id="popup-recherche" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerRecherche()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Recherche</h2>
+            <input id="recherche-texte" type="text" placeholder="Rechercher sur le web...">
+            <br><br>
+            <button onclick="envoyerRecherche()" id="bouton-recherche">Rechercher</button>
+            <p id="reponse-recherche">Réponse: ...</p>
+        </div>
+    </div>
+
+    <div id="popup-trajet" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerTrajet()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Trajet</h2>
+            <input id="trajet-depart" type="text" placeholder="Départ">
+            <br><br>
+            <input id="trajet-destination" type="text" placeholder="Destination">
+            <br><br>
+            <select id="trajet-moyen">
+                <option value="voiture" selected="selected">Voiture</option>
+                <option value="pied">Marche</option>
+                <option value="vélo">Vélo</option>
+            </select>
+            <br><br>
+            <button onclick="envoyerTrajet()" id="bouton-trajet">Calculer</button>
+            <p id="reponse-trajet">Réponse: ...</p>
+        </div>
+    </div>
+
+    <div id="popup-pronote" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerPronote()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Pronote</h2>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('pronote emploi du temps')">Emploi du temps</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('pronote devoirs')">Devoirs</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('pronote notes')">Notes</button>
+            <button class="commande-prédéfinie" onclick="envoyerCommandePrédéfinie('pronote absents')">Profs absents</button>
+        </div>
+    </div>
+
+    <!-- TO-DO LIST -->
+    <div id="popup-todo" class="popup">
+        <div class="popup-contenu popup-todo-contenu">
+
+            <span class="fermer" onclick="fermerTodo()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Ma To-Do List</h2>
+
+            <div class="todo-ajout">
+                <input id="todo-input" type="text" placeholder="Nouvelle tâche..." maxlength="200" autocomplete="off">
+
+                <button onclick="ajouterTacheDepuisSite()" id="todo-bouton-ajouter">
+                    Ajouter
+                </button>
+            </div>
+
+            <p id="todo-message"></p>
+
+            <div id="todo-liste">
+                <p class="todo-vide">Chargement...</p>
+            </div>
+
+            <div class="todo-actions">
+                <button onclick="supprimerTachesTerminees()" class="todo-action">
+                    Supprimer les tâches terminées
+                </button>
+
+                <button onclick="viderTodoDepuisSite()" class="todo-action todo-danger">
+                    Vider la liste
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="popup-revision-accueil" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerRevisionAccueil()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <div class="revision-header">
+                <h2>Révisions</h2>
+
+                <div class="revision-header-droite">
+
+                    <div class="revision-serie">
+                        <span class="icone-serie">🔥</span>
+                        <span id="revision-serie-total">0</span>
+                    </div>
+
+                    <div class="revision-points">
+                        <img src="img/revision-orb.svg" class="icone-points">
+                        <span id="revision-points-total">0</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <button class="commande-prédéfinie" onclick="ouvrirStatistiquesRevision()">Statistiques</button>
+
+            <div class="revision-boite-mystere">
+                <img src="img/boite-mystere.png" class="image-boite-mystere">
+                <p class="boite-mystere-label">20 <img src="img/revision-orb.svg" class="icone-points-inline"> = 1 boîte mystère</p>
+                <button id="bouton-ouvrir-boite" onclick="ouvrirBoiteMystere()">Ouvrir une boîte</button>
+            </div>
+
+            <div class="revision-demarrer">
+                <input id="revision-matiere" type="text" placeholder="Matière (ex: SVT)">
+                <input id="revision-chapitre" type="text" placeholder="Chapitre">
+                <button id="bouton-reviser" onclick="demarrerRevisionDepuisPopup()">RÉVISER</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-statistiques-revision" class="popup">
+        <div class="popup-contenu">
+            <span class="fermer" onclick="fermerStatistiquesRevision()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Statistiques</h2>
+
+            <div id="revision-stats-matieres"></div>
+
+            <h2>Collection</h2>
+            <div id="revision-collection" class="grille-collection"></div>
+        </div>
+    </div>
+
+    <div id="popup-ouverture-boite" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <video id="animation-ouverture-boite" src="img/ouverture-boite-mystere-finale.mp4" muted playsinline></video>
+            <div id="icone-prof-obtenu"></div>
+            <p id="resultat-ouverture-boite"></p>
+            <button id="bouton-fermer-resultat" onclick="fermerOuvertureBoite()" style="display:none;">OK</button>
+        </div>
+    </div>
+
+    <div id="popup-revision" class="popup">
+        <div class="popup-contenu popup-revision">
+
+            <div class="revision-progression">
+                <div id="revision-progression-barre"></div>
+            </div>
+
+            <p id="revision-numero">Question 1 / 5</p>
+
+            <h2 id="revision-question">
+                Chargement...
+            </h2>
+
+            <textarea id="revision-reponse" placeholder="Écris ta réponse..."></textarea>
+
+            <button id="revision-valider" type="button">
+                VALIDER
+            </button>
+
+            <div id="revision-resultat" class="revision-resultat">
+                <div id="revision-resultat-icone"></div>
+                <div>
+                    <h2 id="revision-resultat-titre"></h2>
+                    <p id="revision-resultat-explication"></p>
+                </div>
+                <button id="revision-continuer" onclick="questionSuivanteRevision()">
+                    <img src="img/suivant_page.svg" class="ui-svg-icon"> CONTINUER
+                </button>
+            </div>
+
+            <div id="gain-orbes" class="gain-orbes cache">
+                +0 <img src="img/revision-orb.svg">
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-fin-revision" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <img id="revision-note-image" style="width:120px;">
+            <h2 id="revision-commentaire"></h2>
+            <div class="revision-score-final">
+                <span id="revision-score"></span>
+                <img id="revision-point" src="img/revision-orb.svg">
+            </div>
+            <button onclick="fermerFinRevision()">Continuer</button>
+        </div>
+    </div>
+
+    <div id="popup-question-ia" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerQuestionIA()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Demander à l'IA</h2>
+            <input id="question-ia-input" type="text" placeholder="Votre question...">
+            <button onclick="questionIA()" id="question-ia-button">Demander</button>
+            <p id="reponse-question-ia">Réponse: ...</p>
+        </div>
+    </div>
+
+    <div id="popup-repeter" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerRepeter()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Faire répeter quelque chose</h2>
+            <input id="repeter-input" type="text" placeholder="Ce que vous voulez qu'il répète...">
+            <button onclick="repeter()" id="repeter-button">Faire répeter</button>
+        </div>
+    </div>
+
+    <div id="popup-calculatrice" class="popup">
+        <div class="popup-contenu calculatrice-popup">
+
+            <span class="fermer" onclick="fermerCalculatrice()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Calculatrice</h2>
+
+            <div class="calculatrice">
+
+                <div id="calculatrice-affichage">0</div>
+
+                <div class="calculatrice-boutons">
+
+                    <button class="calc-fonction" onclick="calculatriceEffacer()">AC</button>
+                    <button class="calc-fonction" onclick="calculatriceSupprimer()">⌫</button>
+                    <button class="calc-fonction" onclick="calculatricePourcentage()">%</button>
+                    <button class="calc-operation" onclick="calculatriceEntrer('/')">÷</button>
+
+                    <button onclick="calculatriceEntrer('7')">7</button>
+                    <button onclick="calculatriceEntrer('8')">8</button>
+                    <button onclick="calculatriceEntrer('9')">9</button>
+                    <button class="calc-operation" onclick="calculatriceEntrer('*')">×</button>
+
+                    <button onclick="calculatriceEntrer('4')">4</button>
+                    <button onclick="calculatriceEntrer('5')">5</button>
+                    <button onclick="calculatriceEntrer('6')">6</button>
+                    <button class="calc-operation" onclick="calculatriceEntrer('-')">−</button>
+
+                    <button onclick="calculatriceEntrer('1')">1</button>
+                    <button onclick="calculatriceEntrer('2')">2</button>
+                    <button onclick="calculatriceEntrer('3')">3</button>
+                    <button class="calc-operation" onclick="calculatriceEntrer('+')">+</button>
+
+                    <button class="calc-zero" onclick="calculatriceEntrer('0')">0</button>
+                    <button onclick="calculatriceEntrer('.')">,</button>
+                    <button class="calc-egal" onclick="calculatriceCalculer()">=</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-convertir" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerConvertir()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Convertisseur</h2>
+
+            <select id="unité-convertir" onchange="changerCategorieConversion()">
+                <option value="longueur">Longueur</option>
+                <option value="masse">Masse</option>
+                <option value="volume">Volume</option>
+                <option value="surface">Surface</option>
+                <option value="vitesse">Vitesse</option>
+                <option value="temps">Temps</option>
+                <option value="monnaie">Monnaie</option>
+            </select>
+
+            <h2>Convertir...</h2>
+
+            <div class="conversion-ligne">
+                <input type="number" id="chiffre-de-depart" placeholder="0">
+
+                <select id="select-mesures-unitées"></select>
+            </div>
+
+            <h2>En...</h2>
+
+            <select id="select-mesures-unitées-fin"></select>
+
+            <button id="bouton-convertir" onclick="convertir()">Convertir</button>
+
+            <p id="reponse-convertir">Réponse: ...</p>
+        </div>
+    </div>
+
+    <div id="popup-traduction" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerTraduction()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Traduire des mots</h2>
+            <input id="traduction-mot-input" type="text" placeholder="Les mots à traduire...">
+            <input id="traduction-langue-input" type="text" placeholder="La langue...">
+            <button onclick="traduire()" id="traduction-button">Traduire</button>
+            <p id="reponse-traduction">Réponse: ...</p>
+        </div>
+    </div>
+
+    <div id="popup-notification" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerNotification()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>Programmer une notification</h2>
+            <div class="notification-date">
+                <input type="number" id="notification-jour" min="1" max="31" placeholder="Jour">
+
+                <select id="notification-mois">
+                    <option value="">Mois actuel</option>
+                    <option value="janvier">Janvier</option>
+                    <option value="février">Février</option>
+                    <option value="mars">Mars</option>
+                    <option value="avril">Avril</option>
+                    <option value="mai">Mai</option>
+                    <option value="juin">Juin</option>
+                    <option value="juillet">Juillet</option>
+                    <option value="août">Août</option>
+                    <option value="septembre">Septembre</option>
+                    <option value="octobre">Octobre</option>
+                    <option value="novembre">Novembre</option>
+                    <option value="décembre">Décembre</option>
+                </select>
+            </div>
+
+            <div class="notification-heure">
+                <input type="number" id="notification-heure" min="0" max="23" placeholder="H">
+                <span>:</span>
+                <input type="number" id="notification-minutes" min="0" max="59" placeholder="Min">
+            </div>
+
+            <textarea id="notification-contenu" placeholder="Écris ta notification..."></textarea>
+            <button onclick="programmerNotification()" id="notification-button">Programmer</button>
+        </div>
+    </div>
+
+    <div id="popup-agenda" class="popup">
+        <div class="popup-contenu popup-agenda-contenu">
+            <span class="fermer" onclick="fermerAgenda()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2><img src="img/calendrier.svg" class="ui-svg-icon"> Agenda</h2>
+
+            <div class="agenda-navigation">
+                <button onclick="changerMoisAgenda(-1)" aria-label="Mois précédent"><img src="img/precedent.svg" class="ui-svg-icon"></button>
+                <h3 id="agenda-mois-annee"></h3>
+                <button onclick="changerMoisAgenda(1)" aria-label="Mois suivant"><img src="img/suivant.svg" class="ui-svg-icon"></button>
+            </div>
+
+            <div class="agenda-semaine">
+                <span>Lun</span>
+                <span>Mar</span>
+                <span>Mer</span>
+                <span>Jeu</span>
+                <span>Ven</span>
+                <span>Sam</span>
+                <span>Dim</span>
+            </div>
+
+            <div id="agenda-calendrier" class="agenda-calendrier"></div>
+
+            <div class="agenda-separateur"></div>
+
+            <div class="agenda-actions">
+                <button onclick="ouvrirAjoutEvenement()"><img src="img/ajouter.svg" class="ui-svg-icon"> Ajouter un événement</button>
+                <button onclick="afficherProchainsEvenements()">Prochains événements</button>
+                <button onclick="ouvrirSuppressionEvenement()"><img src="img/supprimer.svg" class="ui-svg-icon"> Supprimer un événement</button>
+                <button onclick="ouvrirModificationEvenement()"><img src="img/modifier.svg" class="ui-svg-icon"> Modifier un événement</button>
+            </div>
+
+            <div id="agenda-ajout" class="agenda-formulaire">
+                <h3>Ajouter un événement</h3>
+
+                <input type="text" id="agenda-ajout-titre" placeholder="Nom de l'événement">
+
+                <input type="date" id="agenda-ajout-date">
+
+                <input type="time" id="agenda-ajout-heure">
+
+                <button onclick="ajouterEvenementAgenda()"><img src="img/ajouter.svg" class="ui-svg-icon"> Ajouter</button>
+
+                <h3>...Ou ajouter un événement depuis une URL</h3>
+
+                <input type="url" id="agenda-ajout-url" placeholder="Tapez l'URL">
+
+                <button onclick="ajouterEvenementDepuisURL()"><img src="img/ajouter.svg" class="ui-svg-icon"> Ajouter depuis l'URL</button>
+            </div>
+
+            <div id="agenda-suppression" class="agenda-formulaire">
+                <h3>Supprimer un événement</h3>
+
+                <input type="text" id="agenda-suppression-titre" placeholder="Nom de l'événement">
+
+                <input type="date" id="agenda-suppression-date">
+
+                <input type="time" id="agenda-suppression-heure">
+
+                <button onclick="supprimerEvenementAgenda()"><img src="img/supprimer.svg" class="ui-svg-icon"> Supprimer</button>
+            </div>
+
+            <div id="agenda-modification" class="agenda-formulaire">
+                <h3>Modifier un événement</h3>
+
+                <input type="text" id="agenda-modification-ancien" placeholder="Événement à modifier">
+
+                <input type="date" id="agenda-modification-date">
+
+                <input type="time" id="agenda-modification-heure">
+
+                <button onclick="modifierEvenementAgenda()"><img src="img/modifier.svg" class="ui-svg-icon"> Modifier</button>
+            </div>
+
+            <div id="agenda-reponse" class="agenda-reponse"></div>
+
+        </div>
+    </div>
+
+    <div id="popup-hasard" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerHasard()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Demander au hasard</h2>
+
+            <button onclick="pileOuFace()" id="pile-ou-face-button">
+                Pile ou face ? 🪙
+            </button>
+
+            <p id="label-input-de">
+                Lancer un dé de <input type="number" id="lancer-de-input" min="2" value="6"> faces.
+            </p>
+
+            <button onclick="lancerDe()" id="lancer-de-button">
+                Lancer ! 🎲
+            </button>
+
+            <p id="label-input-nombre">
+                Nombre aléatoire entre
+                <input type="number" id="nombre-min-input" value="0">
+                et
+                <input type="number" id="nombre-max-input" value="100">
+            </p>
+
+            <button onclick="nombreAleatoireSite()" id="nombre-aleatoire-button">
+                Générer ! 🔢
+            </button>
+
+            <p id="label-input-choix">
+                Choisir au hasard entre
+                <input type="text" id="choix-hasard-input" placeholder="pizza, burger, sushis">
+            </p>
+
+            <button onclick="choixAleatoire()" id="choix-aleatoire-button">
+                Choisir ! 🎯
+            </button>
+
+            <p id="reponse-hasard">
+                Réponse : ...
+            </p>
+        </div>
+    </div>
+
+    <div id="popup-notes" class="popup">
+        <div class="popup-contenu popup-notes-contenu">
+
+            <span class="fermer" onclick="fermerNotes()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Notes</h2>
+
+            <!-- AJOUTER UNE NOTE -->
+            <div class="notes-ajout">
+
+                <input type="text" id="note-titre" placeholder="Titre de la note..." maxlength="100">
+
+                <textarea id="note-texte" placeholder="Écris ta note..." maxlength="5000"></textarea>
+
+                <button onclick="ajouterNoteDepuisSite()" id="note-bouton-ajouter">
+                    Ajouter
+                </button>
+
+            </div>
+
+            <p id="notes-message"></p>
+
+            <!-- LISTE DES NOTES -->
+            <div id="notes-liste">
+                <p class="notes-vide">Chargement...</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="popup-resumer" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerResumer()">&times;</span>
+            <h2>Résumer un texte</h2>
+            <textarea id="resumer-textarea" placeholder="Texte à résumer..."></textarea>
+            <button onclick="resumer()" id="resumer-button">Résumer</button>
+            <p id="reponse-resumer">Réponse : ...</p>
+        </div>
+    </div>
+
+    <div id="popup-analyser-image" class="popup">
+        <div class="popup-contenu popup-analyser-image">
+
+            <span class="fermer" onclick="fermerAnalyserImage()">&times;</span>
+
+            <h2>Analyser une image</h2>
+
+            <input type="file" id="image-a-analyser" accept="image/jpeg,image/png,image/webp">
+
+            <div id="apercu-image-container" style="display:none;">
+                <img id="apercu-image" alt="Aperçu de l'image">
+            </div>
+
+            <button onclick="analyserImage()" id="bouton-analyser-image">
+                <img src="img/loupe.svg" class="ui-svg-icon">
+                Analyser
+            </button>
+
+            <p id="statut-analyse-image"></p>
+
+            <div id="resultat-analyse-image" style="display:none;">
+
+                <h3>Texte détecté</h3>
+
+                <textarea id="texte-image" placeholder="Le texte détecté apparaîtra ici..."></textarea>
+
+                <div class="actions-texte-image">
+
+                    <button onclick="copierTexteImage()">
+                        <img src="img/copié.svg">
+                        Copier
+                    </button>
+
+                    <button onclick="telechargerTexteImage()">
+                        <img src="img/télécharger.svg">
+                        Télécharger TXT
+                    </button>
+
+                    <button onclick="telechargerPdfImage()">
+                        <img src="img/télécharger.svg">
+                        Télécharger PDF
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div id="popup-correction" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerCorrection()">&times;</span>
+            <h2>Corriger un texte</h2>
+            <textarea id="corriger-textarea" placeholder="Texte à corriger..."></textarea>
+            <button onclick="corriger()" id="corriger-button">Corriger</button>
+            <p id="reponse-corriger">Réponse : ...</p>
+        </div>
+    </div>
+
+    <div id="popup-stl-gcode" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerStlGcode()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+            <h2>STL → G-code</h2>
+
+            <input type="file" id="stl-fichier" accept=".stl">
+
+            <button id="stl-convertir">
+                Convertir en G-code
+            </button>
+
+            <p id="stl-statut" style="display: none;"></p>
+        </div>
+    </div>
+
+    <div id="popup-compresseur" class="popup">
+        <div class="popup-contenu popup-compresseur-contenu">
+
+            <span class="fermer" onclick="fermerCompresseur()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Compresser des fichiers</h2>
+
+            <input type="file" id="fichiers-a-compresser" multiple>
+
+            <p id="liste-fichiers-compresseur">
+                Aucun fichier sélectionné.
+            </p>
+
+            <button id="bouton-compresser" onclick="compresserFichiers()">
+                Compresser
+            </button>
+
+            <p id="statut-compresseur" style="display:none;"></p>
+
+        </div>
+    </div>
+
+    <div id="popup-convertisseur-fichier" class="popup">
+        <div class="popup-contenu popup-convertisseur-fichier-contenu">
+
+            <span class="fermer" onclick="fermerConvertisseurFichier()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Convertisseur de fichiers</h2>
+
+            <input type="file" id="fichier-a-convertir">
+
+            <p id="nom-fichier-convertisseur">
+                Aucun fichier sélectionné.
+            </p>
+
+            <label for="format-conversion-fichier" class="label-format-conversion-fichier">
+                Convertir en :
+            </label>
+
+            <select id="format-conversion-fichier">
+                <option value="">Choisir un format</option>
+            </select>
+
+            <button id="bouton-convertir-fichier" onclick="convertirFichierDepuisSite()">
+                Convertir
+            </button>
+
+            <p id="statut-convertisseur-fichier" style="display:none;"></p>
+
+        </div>
+    </div>
+
+    <div id="popup-generer-image" class="popup">
+        <div class="popup-contenu popup-generer-image-contenu">
+
+            <span class="fermer" onclick="fermerGenererImage()"><img src="img/fermer.svg" class="ui-svg-icon" alt="Fermer"></span>
+
+            <h2>Générer une image</h2>
+
+            <textarea id="prompt-generer-image" placeholder="Décris l'image que tu veux générer..." maxlength="2000"></textarea>
+
+            <div class="options-generer-image">
+
+                <div class="option-generer-image">
+                    <label for="format-generer-image">Format</label>
+
+                    <select id="format-generer-image">
+                        <option value="1:1">1:1 — Carré</option>
+                        <option value="16:9">16:9 — Paysage</option>
+                        <option value="9:16">9:16 — Portrait</option>
+                        <option value="4:3">4:3 — Paysage classique</option>
+                        <option value="3:4">3:4 — Portrait classique</option>
+                        <option value="3:2">3:2 — Photo paysage</option>
+                        <option value="2:3">2:3 — Photo portrait</option>
+                    </select>
+                </div>
+
+                <div class="option-generer-image">
+                    <label for="qualite-generer-image">Qualité</label>
+
+                    <select id="qualite-generer-image">
+                        <option value="basse">Basse</option>
+                        <option value="moyenne" selected>Moyenne</option>
+                        <option value="haute">Haute</option>
+                        <option value="ultra">Ultra</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button onclick="genererImageDepuisSite()" id="bouton-generer-image">
+                Générer l'image
+            </button>
+
+            <p id="statut-generer-image" style="display:none;"></p>
+
+            <div id="resultat-generer-image" style="display:none;">
+
+                <img id="image-generee" alt="Image générée par DeskBot">
+
+                <button onclick="telechargerImageGeneree()" id="bouton-telecharger-image">
+                    Télécharger l'image
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div id="popup-mots-de-passes" class="popup">
+        <div class="popup-contenu" style="text-align:center;">
+            <span class="fermer" onclick="fermerMotsDePasses()">&times;</span>
+            <h2>Créer un mot de passe</h2>
+            <label for="longueur-input" id="label-mdp">Longueur:</label>
+            <input type="number" placeholder="Longueur..." min="0" value="16" id="longueur-input">
+            <br>
+            <div id="checkbox-mdp">
+                <input type="checkbox" id="majuscules-checkbox">
+                <label for="majuscules-checkbox" id="label-mdp">Majuscules</label>
+                <br>
+                <input type="checkbox" id="minuscules-checkbox">
+                <label for="minuscules-checkbox" id="label-mdp">Minuscules</label>
+                <br>
+                <input type="checkbox" id="chiffres-checkbox">
+                <label for="chiffres-checkbox" id="label-mdp">Chiffres</label>
+                <br>
+                <input type="checkbox" id="symboles-checkbox">
+                <label for="symboles-checkbox" id="label-mdp">Symboles</label>
+                <br>
+                <input type="checkbox" id="exclure-ambigus-checkbox">
+                <label for="exclure-ambigus-checkbox" id="label-mdp">Exclure ambigus</label>
+            </div>
+            <br>
+            <button onclick="creerMotDePasse()" id="mot-de-passe-button">Créer</button>
+            <br>
+            <p id="mdp-result" style="display: none;"></p>
+            <button id="copier-mdp-button" style="display: none;" onclick="copierMotDePasse()">
+                <img src="img/copié.svg" id="copier-mdp" style="display: none; height: 30px;">
+            </button>
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         NOUVELLE INTERFACE DESKBOT
+         Les popups et IDs historiques restent conservés au-dessus
+         afin de rester compatibles avec script.js.
+         ========================================================= -->
+
+    <div class="deskbot-app">
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <button class="brand" type="button" onclick="changerSection('accueil')">
+                    <span class="brand-logo">
+                        <img src="img/favicon.png" alt="DeskBot">
+                    </span>
+                    <span class="brand-text">
+                        <strong>DeskBot</strong>
+                        <small>Assistant personnel</small>
+                    </span>
+                </button>
+
+                <button class="sidebar-toggle" type="button" onclick="basculerSidebar()" aria-label="Réduire la barre latérale">
+                    <span><img src="img/menu.svg" class="ui-svg-icon"></span>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Navigation principale">
+
+                <div class="nav-group">
+                    <p class="nav-label">Principal</p>
+                    <button class="nav-item active" data-section="accueil" onclick="changerSection('accueil')">
+                        <span class="nav-icon"><img src="img/accueil.svg" class="ui-svg-icon"></span>
+                        <span>Accueil</span>
+                    </button>
+                </div>
+
+                <div class="nav-group">
+                    <p class="nav-label">Sections</p>
+
+                    <button class="nav-item" data-section="systeme" onclick="changerSection('systeme')">
+                        <span class="nav-icon"><img src="img/parametres.svg" class="ui-svg-icon"></span>
+                        <span>Système</span>
+                    </button>
+
+                    <button class="nav-item" data-section="discussion" onclick="changerSection('discussion')">
+                        <span class="nav-icon"><img src="img/microphone.svg" class="ui-svg-icon"></span>
+                        <span>Discussion</span>
+                    </button>
+
+                    <button class="nav-item" data-section="utilitaires" onclick="changerSection('utilitaires')">
+                        <span class="nav-icon"><img src="img/commandes.svg" class="ui-svg-icon"></span>
+                        <span>Utilitaires</span>
+                    </button>
+
+                    <button class="nav-item" data-section="scolarite" onclick="changerSection('scolarite')">
+                        <span class="nav-icon"><img src="img/ecole.svg" class="ui-svg-icon"></span>
+                        <span>Scolarité</span>
+                    </button>
+
+                    <button class="nav-item" data-section="outils" onclick="changerSection('outils')">
+                        <span class="nav-icon"><img src="img/outils.svg" class="ui-svg-icon"></span>
+                        <span>Outils</span>
+                    </button>
+                </div>
+
+                <div class="nav-group nav-group-bottom">
+                    <p class="nav-label">Compte</p>
+
+                    <button class="nav-item" type="button" onclick="ouvrirConnexionDepuisNavigation()">
+                        <span class="nav-icon"><img src="img/securite.svg" class="ui-svg-icon"></span>
+                        <span>Se connecter</span>
+                    </button>
+
+                    <button class="nav-item" data-section="parametres" onclick="changerSection('parametres')">
+                        <span class="nav-icon"><img src="img/parametres.svg" class="ui-svg-icon"></span>
+                        <span>Paramètres</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="sidebar-status">
+                <span class="status-dot"></span>
+                <span class="sidebar-status-text">
+                    <strong>DeskBot</strong>
+                    <small>Prêt à fonctionner</small>
+                </span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <!-- ACCUEIL -->
+            <section class="app-section active" id="section-accueil" data-page="accueil">
+                <header class="page-header">
+                    <div>
+                        <p class="eyebrow">TABLEAU DE BORD</p>
+                        <h1>Bonjour !</h1>
+                        <p class="page-description">Que voulez-vous faire aujourd'hui ?</p>
+                    </div>
+
+                    <div class="header-actions">
+                        <label class="global-search">
+                            <span><img src="img/loupe.svg" class="ui-svg-icon"></span>
+                            <input id="recherche-globale" type="search" placeholder="Rechercher une fonctionnalité..." autocomplete="off">
+                        </label>
+                    </div>
+                </header>
+
+                <div class="hero-card">
+                    <div class="hero-content">
+                        <span class="hero-badge">DESKBOT</span>
+                        <h2>Votre assistant personnel.</h2>
+                        <p>Contrôlez DeskBot, accédez à vos outils et retrouvez toutes vos fonctionnalités depuis un seul espace.</p>
+
+                        <div class="hero-actions">
+                            <button class="primary-button" type="button" onclick="focusCommande()">
+                                <span><img src="img/envoyer.svg" class="ui-svg-icon"></span>
+                                Donner une commande
+                            </button>
+                            <button class="secondary-button" type="button" onclick="lancerEcouteDepuisAccueil()">
+                                <span><img src="img/microphone.svg" class="ui-svg-icon"></span>
+                                Écouter
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="hero-orbit" aria-hidden="true">
+                        <div class="orbit orbit-1"></div>
+                        <div class="orbit orbit-2"></div>
+                        <div class="orbit-core">
+                            <img src="img/favicon.png">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="command-bar-card">
+                    <div class="command-bar-icon"><img src="img/microphone.svg" class="ui-svg-icon"></div>
+                    <div class="command-bar-input">
+                        <input id="commande" type="text" placeholder="Entrez votre commande..." autocomplete="off">
+                        <small>Appuyez sur Entrée pour envoyer</small>
+                    </div>
+                    <button onclick="envoyerCommande()" id="bouton-envoyer" class="command-send">Envoyer</button>
+                </div>
+
+                <div class="response-card">
+                    <span class="response-label">RÉPONSE</span>
+                    <p id="reponse">Réponse: ...</p>
+                </div>
+
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">ACCÈS RAPIDE</p>
+                        <h2>Fonctionnalités</h2>
+                    </div>
+                    <button class="text-button" onclick="changerSection('utilitaires')">Tout afficher →</button>
+                </div>
+
+                <div class="feature-grid feature-grid-home">
+                    <button class="feature-card" data-search="musique" onclick="ouvrirMusique()">
+                        <span class="feature-icon music"><img src="img/musique.svg" class="ui-svg-icon"></span>
+                        <span class="feature-copy"><strong>Musique</strong><small>Contrôler votre musique</small></span>
+                    </button>
+                    <button class="feature-card" data-search="météo meteo" onclick="ouvrirMeteo()">
+                        <span class="feature-icon weather"><img src="img/meteo.svg" class="ui-svg-icon"></span>
+                        <span class="feature-copy"><strong>Météo</strong><small>Conditions météorologiques</small></span>
+                    </button>
+                    <button class="feature-card" data-search="mails mail email" onclick="ouvrirMails()">
+                        <span class="feature-icon mail"><img src="img/mails.svg" class="ui-svg-icon"></span>
+                        <span class="feature-copy"><strong>Mails</strong><small>Consulter vos messages</small></span>
+                    </button>
+                    <button class="feature-card" data-search="agenda calendrier" onclick="ouvrirAgenda()">
+                        <span class="feature-icon agenda"><img src="img/agenda.svg" class="ui-svg-icon"></span>
+                        <span class="feature-copy"><strong>Agenda</strong><small>Gérer vos événements</small></span>
+                    </button>
+                    <button class="feature-card" data-search="révisions revision" onclick="ouvrirRevisionAccueil()">
+                        <span class="feature-icon school"><img src="img/revision.svg" class="ui-svg-icon"></span>
+                        <span class="feature-copy"><strong>Révisions</strong><small>Apprendre et progresser</small></span>
+                    </button>
+                    <button class="feature-card" data-search="desktube youtube vidéos video" onclick="ouvrirDeskTube()">
+                        <span class="feature-icon youtube"><img src="img/favicon_desktube.png" class="ui-svg-icon"></span>
+                        <span class="feature-copy"><strong>DeskTube</strong><small>Regarder des vidéos</small></span>
+                    </button>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-panel">
+                        <div class="panel-title">
+                            <div>
+                                <p class="eyebrow">SYSTÈME</p>
+                                <h3>État du DeskBot</h3>
+                            </div>
+                            <span class="live-pill"><i></i> En ligne</span>
+                        </div>
+
+                        <div class="system-mini-grid">
+                            <div class="system-mini">
+                                <span class="mini-icon"><img src="img/systeme.svg" class="ui-svg-icon"></span>
+                                <div><strong>Serveur</strong><small>Connecté</small></div>
+                            </div>
+                            <div class="system-mini">
+                                <span class="mini-icon"><img src="img/microphone.svg" class="ui-svg-icon"></span>
+                                <div><strong>Micro</strong><small>Disponible</small></div>
+                            </div>
+                            <div class="system-mini">
+                                <span class="mini-icon"><img src="img/volume.svg" class="ui-svg-icon"></span>
+                                <div><strong>Audio</strong><small>Disponible</small></div>
+                            </div>
+                            <div class="system-mini">
+                                <span class="mini-icon"><img src="img/en_ligne.svg" class="ui-svg-icon"></span>
+                                <div><strong>Services</strong><small>Opérationnels</small></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-panel">
+                        <div class="panel-title">
+                            <div>
+                                <p class="eyebrow">COMMANDES</p>
+                                <h3>Accès aux sections</h3>
+                            </div>
+                        </div>
+                        <div class="section-shortcuts">
+                            <button onclick="changerSection('systeme')"><span><img src="img/parametres.svg" class="ui-svg-icon"></span>Système<i>→</i></button>
+                            <button onclick="changerSection('discussion')"><span><img src="img/microphone.svg" class="ui-svg-icon"></span>Discussion<i>→</i></button>
+                            <button onclick="changerSection('utilitaires')"><span><img src="img/commandes.svg" class="ui-svg-icon"></span>Utilitaires<i>→</i></button>
+                            <button onclick="changerSection('scolarite')"><span><img src="img/ecole.svg" class="ui-svg-icon"></span>Scolarité<i>→</i></button>
+                            <button onclick="changerSection('outils')"><span><img src="img/outils.svg" class="ui-svg-icon"></span>Outils<i>→</i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SYSTÈME -->
+            <section class="app-section" id="section-systeme" data-page="systeme">
+                <header class="page-header">
+                    <div>
+                        <p class="eyebrow">SECTION</p>
+                        <h1>Système</h1>
+                        <p class="page-description">Contrôlez l'état et les fonctions principales de DeskBot.</p>
+                    </div>
+                </header>
+
+                <div class="system-status-banner">
+                    <div class="system-status-main">
+                        <div id="slide-render-cloudflare" class="server-switch-card">
+                            <span id="texte-slide">Serveur</span>
+                            <label class="switch">
+                                <input type="checkbox" onchange="changeSlide(this)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <span class="status-ring"><span></span></span>
+                        <div><strong>DeskBot est prêt</strong><small>Le système est disponible.</small></div>
+                    </div>
+                    <div id="etat-deskbot" class="system-legacy-state etat-deskbot etat-attente">
+                        <img id="etat-deskbot-image" src="img/hors_ligne.svg" alt="État du DeskBot">
+                        <div class="etat-deskbot-infos"><h3>DeskBot</h3><p id="etat-deskbot-texte">En veille</p></div>
+                    </div>
+                </div>
+
+                <div class="section-heading compact"><div><p class="eyebrow">MINUTEURS & ALARMES</p><h2>Contrôles</h2></div></div>
+
+                <div class="system-tools-grid">
+                    <div class="tool-control-card">
+                        <div class="tool-card-head"><span class="feature-icon clock"><img src="img/chronometre.svg" class="ui-svg-icon"></span><div><strong>Chronomètre</strong><small id="chronometre-texte">Chronomètre: 0 sec</small></div></div>
+                        <div class="control-actions">
+                            <button id="go" onclick="GoChrono()" aria-label="Démarrer"><img src="img/chronometre.svg" class="ui-svg-icon"></button>
+                            <button id="PausePlay" onclick="PausePlayChrono()" aria-label="Pause"><img src="img/pause.svg" class="ui-svg-icon"></button>
+                            <button id="stop" onclick="StopChrono()" aria-label="Stop"><img src="img/stop.svg" class="ui-svg-icon"></button>
+                            <button id="repeat" onclick="RepeatChrono()" aria-label="Réinitialiser"><img src="img/repeat.svg" class="ui-svg-icon"></button>
+                        </div>
+                        <div id="chrono" class="legacy-time-value" aria-hidden="true"></div>
+                    </div>
+
+                    <div class="tool-control-card">
+                        <div class="tool-card-head"><span class="feature-icon timer"><img src="img/minuteur.svg" class="ui-svg-icon"></span><div><strong>Minuteur</strong><small id="minuteur-texte">Minuteur: 0 sec</small></div></div>
+                        <div class="control-actions">
+                            <button id="clock" onclick="SetMinuteur()" aria-label="Régler"><img src="img/horloge.svg" class="ui-svg-icon"></button>
+                            <button id="PausePlayMinuteur" onclick="PausePlayMinuteur()" aria-label="Pause"><img src="img/pause.svg" class="ui-svg-icon"></button>
+                            <button id="repeatMinuteur" onclick="RepeatMinuteur()" aria-label="Réinitialiser"><img src="img/repeat.svg" class="ui-svg-icon"></button>
+                        </div>
+                        <div id="minuteur" class="legacy-time-value" aria-hidden="true"></div>
+                    </div>
+
+                    <div class="tool-control-card">
+                        <div class="tool-card-head"><span class="feature-icon alarm"><img src="img/alarme.svg" class="ui-svg-icon"></span><div><strong>Alarme</strong><small id="alarme-texte">Alarme: -- h -- min</small></div></div>
+                        <div class="control-actions">
+                            <button id="gear" onclick="SetAlarme()" aria-label="Régler"><img src="img/parametres.svg" class="ui-svg-icon"></button>
+                            <button id="ActiveSlashAlarme" onclick="ActiveSlashAlarme()" aria-label="Activer"><img src="img/bell-active.svg"></button>
+                            <button id="supprimerAlarme" onclick="supprimerAlarme()" aria-label="Supprimer"><img src="img/supprimer.svg" class="ui-svg-icon"></button>
+                            <button id="sonnerieAlarme" onclick="sonnerieAlarme()" aria-label="Sonnerie"><img src="img/musique.svg" class="ui-svg-icon"></button>
+                        </div>
+                        <div id="alarme" class="legacy-time-value" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <div class="section-heading compact"><div><p class="eyebrow">COMMANDES</p><h2>Commandes système</h2></div></div>
+                <div class="feature-grid command-feature-grid">
+                    <button class="feature-card command-card" data-search="activer deskbot" onclick="envoyerCommandePrédéfinie('deskBot activé')"><span class="feature-icon"><img src="img/en_ligne.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Activer le DeskBot</strong><small>Démarrer l'assistant</small></span></button>
+                    <button class="feature-card command-card" data-search="désactiver deskbot" onclick="envoyerCommandePrédéfinie('deskBot désactivé')"><span class="feature-icon"><img src="img/hors_ligne.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Désactiver le DeskBot</strong><small>Mettre l'assistant en pause</small></span></button>
+                    <button class="feature-card command-card" data-search="arrêter programme au revoir" onclick="envoyerCommandePrédéfinie('au revoir')"><span class="feature-icon"><img src="img/stop.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Arrêter le programme</strong><small>Éteindre DeskBot</small></span></button>
+                </div>
+            </section>
+
+            <!-- DISCUSSION -->
+            <section class="app-section" id="section-discussion" data-page="discussion">
+                <header class="page-header">
+                    <div><p class="eyebrow">SECTION</p><h1>Discussion</h1><p class="page-description">Discutez avec DeskBot et utilisez ses commandes vocales.</p></div>
+                </header>
+                <div class="section-intro-card">
+                    <div class="intro-icon"><img src="img/microphone.svg" class="ui-svg-icon"></div>
+                    <div><strong>Parlez avec DeskBot</strong><p>Choisissez une commande ou utilisez la barre de commande pour lui parler directement.</p></div>
+                </div>
+                <div class="feature-grid command-feature-grid">
+                    <button class="feature-card command-card" data-search="bonjour" onclick="envoyerCommandePrédéfinie('bonjour')"><span class="feature-icon"><img src="img/parler.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Dire : bonjour</strong><small>Saluer DeskBot</small></span></button>
+                    <button class="feature-card command-card" data-search="merci" onclick="envoyerCommandePrédéfinie('merci')"><span class="feature-icon"><img src="img/parler.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Dire : merci</strong><small>Remercier DeskBot</small></span></button>
+                    <button class="feature-card command-card" data-search="ça va comment va" onclick="envoyerCommandePrédéfinie('ça va')"><span class="feature-icon"><img src="img/parler.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Demander comment ça va</strong><small>Discuter avec DeskBot</small></span></button>
+                    <button class="feature-card command-card" data-search="qui es-tu" onclick="envoyerCommandePrédéfinie('qui es-tu')"><span class="feature-icon"><img src="img/parler.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Qui es-tu ?</strong><small>En savoir plus sur DeskBot</small></span></button>
+                    <button class="feature-card command-card" data-search="heure temps" onclick="envoyerCommandePrédéfinie('quelle heure est-il')"><span class="feature-icon"><img src="img/horloge.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Demander l'heure</strong><small>Connaître l'heure actuelle</small></span></button>
+                    <button class="feature-card command-card" data-search="répéter repeter" onclick="ouvrirRepeter()"><span class="feature-icon"><img src="img/actualiser.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Répéter</strong><small>Faire répéter une phrase</small></span></button>
+                    <button class="feature-card command-card" data-search="blague" onclick="envoyerCommandePrédéfinie('Fais moi une blague')"><span class="feature-icon"><img src="img/parler.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Demander une blague</strong><small>Une petite dose d'humour</small></span></button>
+                    <button class="feature-card command-card" data-search="anecdote" onclick="envoyerCommandePrédéfinie('Dis moi une anecdote')"><span class="feature-icon"><img src="img/cerveau.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Demander une anecdote</strong><small>Apprendre quelque chose</small></span></button>
+                    <button class="feature-card command-card" data-search="devinette" onclick="envoyerCommandePrédéfinie('Pose moi une devinette')"><span class="feature-icon"><img src="img/cerveau.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Demander une devinette</strong><small>Tester votre logique</small></span></button>
+                </div>
+            </section>
+
+            <!-- UTILITAIRES -->
+            <section class="app-section" id="section-utilitaires" data-page="utilitaires">
+                <header class="page-header">
+                    <div><p class="eyebrow">SECTION</p><h1>Utilitaires</h1><p class="page-description">Les fonctions du quotidien réunies au même endroit.</p></div>
+                </header>
+                <div class="feature-grid command-feature-grid">
+                    <button class="feature-card" data-search="météo meteo" onclick="ouvrirMeteo()"><span class="feature-icon weather"><img src="img/meteo.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Météo</strong><small>Consulter la météo</small></span></button>
+                    <button class="feature-card" data-search="musique" onclick="ouvrirMusique()"><span class="feature-icon music"><img src="img/musique.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Musique</strong><small>Contrôler la musique</small></span></button>
+                    <button class="feature-card" data-search="mails mail" onclick="ouvrirMails()"><span class="feature-icon mail"><img src="img/mails.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Mails</strong><small>Lire et envoyer des mails</small></span></button>
+                    <button class="feature-card" data-search="recherche web google" onclick="ouvrirRecherche()"><span class="feature-icon search"><img src="img/recherche.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Recherche</strong><small>Faire une recherche web</small></span></button>
+                    <button class="feature-card" data-search="trajet route" onclick="ouvrirTrajet()"><span class="feature-icon route"><img src="img/trajet.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Trajet</strong><small>Calculer un itinéraire</small></span></button>
+                    <button class="feature-card" data-search="youtube statistiques stats" onclick="ouvrirStatsYoutube()"><span class="feature-icon youtube"><img src="img/statistiques.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Stats YouTube</strong><small>Voir les statistiques d'une chaîne</small></span></button>
+                    <button class="feature-card" data-search="agenda calendrier" onclick="ouvrirAgenda()"><span class="feature-icon agenda"><img src="img/agenda.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Agenda</strong><small>Gérer votre calendrier</small></span></button>
+                    <button class="feature-card" data-search="notes" onclick="ouvrirNotes()"><span class="feature-icon notes"><img src="img/notes.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Notes</strong><small>Créer et consulter des notes</small></span></button>
+                    <button class="feature-card" data-search="todo tâches liste" onclick="ouvrirTodo()"><span class="feature-icon todo"><img src="img/taches.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>To-Do List</strong><small>Gérer vos tâches</small></span></button>
+                    <button class="feature-card" data-search="calculatrice calcul" onclick="ouvrirCalculatrice()"><span class="feature-icon calculator"><img src="img/calculatrice.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Calculatrice</strong><small>Effectuer un calcul</small></span></button>
+                    <button class="feature-card" data-search="traduction traduire" onclick="ouvrirTraduction()"><span class="feature-icon translate"><img src="img/traduire.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Traduction</strong><small>Traduire des mots</small></span></button>
+                    <button class="feature-card" data-search="générer image generation image ia" onclick="ouvrirGenererImage()"><span class="feature-icon image"><img src="img/image.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Génération d'image</strong><small>Créer une image avec l'IA</small></span></button>
+                    <button class="feature-card" data-search="desktube youtube vidéos" onclick="ouvrirDeskTube()"><span class="feature-icon youtube"><img src="img/favicon_desktube.png" class="ui-svg-icon"></span><span class="feature-copy"><strong>DeskTube</strong><small>Votre espace vidéo</small></span></button>
+                </div>
+            </section>
+
+            <!-- SCOLARITÉ -->
+            <section class="app-section" id="section-scolarite" data-page="scolarite">
+                <header class="page-header">
+                    <div><p class="eyebrow">SECTION</p><h1>Scolarité</h1><p class="page-description">Vos outils scolaires et votre espace de révision.</p></div>
+                </header>
+                <div class="school-banner">
+                    <div><span class="school-banner-icon"><img src="img/ecole.svg" class="ui-svg-icon"></span><div><strong>Votre espace scolaire</strong><p>Accédez rapidement à Pronote, aux cours importés et aux révisions.</p></div></div>
+                    <button class="primary-button" onclick="ouvrirRevisionAccueil()">Réviser</button>
+                </div>
+                <div class="feature-grid command-feature-grid">
+                    <button class="feature-card" data-search="pronote emploi du temps devoirs notes absents" onclick="ouvrirPronote()"><span class="feature-icon pronote"><img src="img/ecole.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Pronote</strong><small>Emploi du temps, devoirs, notes...</small></span></button>
+                    <button class="feature-card" data-search="importer cours" onclick="ouvrirImportCours()"><span class="feature-icon import"><img src="img/ajouter.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Importer un cours</strong><small>Ajouter un cours à DeskBot</small></span></button>
+                    <button class="feature-card" data-search="révisions revision" onclick="ouvrirRevisionAccueil()"><span class="feature-icon school"><img src="img/revision.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Révisions</strong><small>Gérer vos sessions et votre progression</small></span></button>
+                    <button class="feature-card" data-search="session révision revision" onclick="envoyerCommandePrédéfinie('démarre une session de révision')"><span class="feature-icon play"><img src="img/play.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Session de révision</strong><small>Démarrer directement une session</small></span></button>
+                </div>
+            </section>
+
+            <!-- OUTILS -->
+            <section class="app-section" id="section-outils" data-page="outils">
+                <header class="page-header">
+                    <div><p class="eyebrow">SECTION</p><h1>Outils</h1><p class="page-description">Des outils puissants pour créer, analyser, convertir et travailler.</p></div>
+                </header>
+                <div class="feature-grid command-feature-grid">
+                    <button class="feature-card" data-search="ia intelligence artificielle question" onclick="ouvrirQuestionIA()"><span class="feature-icon ai"><img src="img/cerveau.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Demander à l'IA</strong><small>Poser une question à l'IA</small></span></button>
+                    <button class="feature-card" data-search="convertisseur unités conversion" onclick="ouvrirConvertir()"><span class="feature-icon convert"><img src="img/argent.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Convertisseur</strong><small>Convertir des unités</small></span></button>
+                    <button class="feature-card" data-search="notification" onclick="ouvrirNotification()"><span class="feature-icon notification"><img src="img/alarme.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Notifications</strong><small>Programmer une notification</small></span></button>
+                    <button class="feature-card" data-search="hasard aléatoire dé choix" onclick="ouvrirHasard()"><span class="feature-icon random"><img src="img/hasard.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Hasard</strong><small>Choisir ou générer aléatoirement</small></span></button>
+                    <button class="feature-card" data-search="résumer résumé texte" onclick="ouvrirResumer()"><span class="feature-icon summary"><img src="img/compresseur.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Résumer un texte</strong><small>Obtenir un résumé rapide</small></span></button>
+                    <button class="feature-card" data-search="analyser image ocr" onclick="ouvrirAnalyserImage()"><span class="feature-icon image"><img src="img/ocr.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Analyser une image</strong><small>Extraire et analyser du contenu</small></span></button>
+                    <button class="feature-card" data-search="corriger correction texte" onclick="ouvrirCorrection()"><span class="feature-icon correction"><img src="img/modifier.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Corriger un texte</strong><small>Améliorer l'orthographe et le texte</small></span></button>
+                    <button class="feature-card" data-search="stl gcode 3d impression" onclick="ouvrirStlGcode()"><span class="feature-icon printer"><img src="img/argent.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>STL → G-code</strong><small>Préparer un modèle 3D</small></span></button>
+                    <button class="feature-card" data-search="compresseur compresser fichiers" onclick="ouvrirCompresseur()"><span class="feature-icon compress"><img src="img/compresseur.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Compresseur</strong><small>Compresser vos fichiers</small></span></button>
+                    <button class="feature-card" data-search="convertisseur fichier fichiers format" onclick="ouvrirConvertisseurFichier()"><span class="feature-icon file"><img src="img/convertisseur.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Convertisseur de fichiers</strong><small>Changer le format d'un fichier</small></span></button>
+                    <button class="feature-card" data-search="mot de passe password générateur" onclick="ouvrirMotsDePasses()"><span class="feature-icon password"><img src="img/mot_de_passe.svg" class="ui-svg-icon"></span><span class="feature-copy"><strong>Générateur de mots de passe</strong><small>Créer un mot de passe personnalisé</small></span></button>
+                </div>
+            </section>
+
+            <!-- PARAMÈTRES -->
+            <section class="app-section" id="section-parametres" data-page="parametres">
+                <header class="page-header">
+                    <div><p class="eyebrow">COMPTE</p><h1>Paramètres</h1><p class="page-description">La gestion du compte et de l'apparence arrivera ici.</p></div>
+                </header>
+                <div class="settings-placeholder">
+                    <div class="settings-placeholder-icon"><img src="img/parametres.svg" class="ui-svg-icon"></div>
+                    <h2>Personnalisation</h2>
+                    <p>Cette page est prête pour accueillir les paramètres de compte, de thème, de notifications et les préférences DeskBot.</p>
+                    <button class="primary-button" onclick="ouvrirConnexionDepuisNavigation()">Se connecter</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Recherche historique conservée pour la compatibilité de script.js. -->
+    <div id="legacy-commandes-compat" aria-hidden="true">
+        <input type="text" id="recherche-commandes" oninput="rechercherCommandes()">
+        <div class="commandes-prédéfinies">
+            <div class="classe-commandes"><h3 class="titre-classe-commandes">Système</h3>
+                <div class="commande-prédéfinie"><p class="commande-texte">Activer le DeskBot</p></div>
+                <div class="commande-prédéfinie"><p class="commande-texte">Désactiver le DeskBot</p></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
